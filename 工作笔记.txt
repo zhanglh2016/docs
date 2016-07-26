@@ -1,0 +1,405 @@
+【Linux常用命令】：
+	查找可执行文件（指定路径）：which service  或者 whereis service
+	模糊查找文件及路径：		find /home/market/class/  -name "*emagInt*"     -- 172.18.173.3
+	查找文件及路径：			find /home/market/class/ -type d -name "*emagInt*"     -- 172.18.173.3
+	查找文件及路径：			find /home -type d -iname "*emagInt*"     -- 不区分大小写
+	查找连接文件：				find /etc -type l
+	查找大于1M的文件：			find /etc -size +1000K
+	查找文件及路径：			find /root/soft/project/class/ -type f -name "*SMSServiceImpl*"
+	查找特殊权限：				find / -perm +7000
+	查看所有文件夹大小			du -sh *
+	查看磁盘分配				fdisk -l
+	查看已分配磁盘				df -h
+	查看下8081端口是否被占用	lsof -i:8081		netstat -tln | grep 端口号		lsof -i:端口号 
+
+	普通执行文件				/usr/bin
+	服务器执行程序和管理程序	/usr/sbin
+	应用程序配置文件			/etc
+	应用程序文档文件			/usr/share/doc
+	应用程序手册文件			/usr/share/man
+
+	临时更改计算机名称			hostname zhanglh    改完之后必须重新登录（临时的）
+	永久更改计算机名称			vi   /etc/sysconfig/network
+
+	网卡配置					vi /etc/sysconfig/network-scripts/ifcfg-eth0    ==> ONBOOT=yes		BOOTPROTO=dhcp
+	网络重启					service network restart
+	上网配置（DNS配置）			vi /etc/resolv.conf 
+									nameserver 192.168.247.2
+	设置解析服务器
+	echo "nameserver 221.131.143.69" >> /etc/resolv.conf
+	echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+
+								curl -c -L www.baidu.com
+	【网络配置临时生效操作】							
+	ifconfig eth0 down
+	ifconfig eth0 up
+	ifconfig eth0 192.168.247.129							
+
+	yum源的配置文件				/etc/yum.repos.d/CentOS-Base.repo
+	yum clean all
+	yum makecache
+
+	升级操作系统的包（uname -a）yum update
+	安装指定的软件包			yum install httpd
+	升级指定的软件包			yum update httpd
+	删除指定的软件包			yum remove httpd
+	搜索指定的软件包			yum search httpd
+	列出已安装软件的详细信息	yum list httpd
+
+	rpm -q httpd
+	查询Linux系统中的所有软件包			rpm -qa
+	查询指定名称的软件包是否安装		rpm -q 包名称
+	查询指定名称软件包的详细信息		rpm -qi 包名称
+	查询指定名称软件中所包括的文件列表	rpm -ql 包名称
+	查询指定文件所属的软件包			rpm -qf 文件名称
+	查询指定RPM包文件的详细信息			rpm -qpi 包文件名
+	查询指定RPM包中包含的文件列表		rpm -qpl 包文件名		
+	安装指定的软件包					rpm -ivh xxx.rpm	
+	升级指定的软件包					rpm -u xxx.rpm
+	卸载指定的软件包					rpm -e 包文件名（无.rpm后缀）
+										Q 我用rpm -e **.rpm无法删除rpm包
+										A 包名不要包括rpm，rpm -e 包名，可以包含版本号等信息，但是不可以有后缀.rpm
+
+	实现软件包的查询功能				rpm -q
+	实现软件包的安装功能				rpm -i
+	实现软件包的更新功能				rpm -u
+	实现软件包的删除功能				rpm -e
+
+	查看包安装的位置					rpm -ql php-gd-5.3.3-38.el6.x86_64
+
+	【用户管理 /etc/passwd	/etc/shadow 	/etc/group	/etc/gshadow】
+	cat /etc/passwd
+	root:x:0:0:root:/root:/bin/bash		用户名：口令：用户标识号：组织标识号：描述：自家目录：命令解释器
+	创建一个新用户						useradd zhangsan
+	创建一个新用户，加注释				useradd -c "test user zhangsan" zhangsan
+	创建一个新用户,并加入到组中			useradd -G share zhangsan
+	修改zhangsan的名称->test1			usermod -l test1 zhangsan
+	锁定账号							usermod -L zhangsan
+	解锁账号							usermod -U zhangsan
+	删除账号							userdel zhangsan
+	删除账号+账号的home目录				userdel -r zhangsan
+
+	修改密码							passwd zhangsan
+	删除密码							passwd -d zhangsan
+	锁定账户密码						passwd -l zhangsan
+	解锁账户密码						passwd -u zhangsan
+
+	密码策略							vi /etc/login.defs 
+	查看用户信息						chage -l test1
+
+
+	设置test1用户2天不能改密码，30天过期，提前5天告警提醒		chage -m 2 -M 30 -w 5 test1
+
+	创建一个新组						groupadd share
+	将组名更改成zlh						groupmod -n zlh share
+	删除组								groupdel zlh
+
+	增加sudo权限						visudo
+	查看当前用户信息					id
+	查看当前用户组						groups
+	改变当前用户默认组（当前用户有好几组的情况下）		newgrp
+
+	磁盘分区                  			fdisk /dev/sdb
+	磁盘分区文件系统格式				mke2fs -j /dev/sdb1    ==  mkfs -t ext3 -c /dev/hdb2
+	磁盘分区检测						e2fsck -p  /dev/sdb1
+	查看当前分区的详细信息				tune2fs -l /dev/sdb1
+	当前分区挂载30次后，自动检测		tune2fs -c 30 /dev/sdb1
+	当前分区70天后，自动检测			tune2fs -i 70d /dev/sdb1
+	设置分区卷标						e2label /dev/sdb1 www-data
+
+	分区挂载（永久挂载）				vi /etc/fstab
+										mount -a   (立马生效挂载目录)
+										mount
+	临时性挂载							mount -t ext3 /dev/sdb1 /opt
+	临时性挂载windows fat格式			mount -t vfat /dev/sdb1 /opt
+	临时性挂载windows ntfs格式			mount -t vntfs /dev/sdb1 /opt
+	取消挂载							umount /opt
+
+	挂载光驱							cd media
+										mkdir cdrom
+										cd ..
+										mount media/cdrom
+
+	挂载U盘   							mount -t （vfat、vntfs） /dev/sdbc1 /media/usb
+	挂载镜像文件 						mkdir -p /media/iso
+										mount -o loop docs.iso /media/iso
+
+
+	抓包						tcpdump -s0 -nn -w ztecfg.pcap -iany host 112.4.3.138
+	读包						tcpdump -s0 -nn -X -r ztecfg.pcap
+	
+	反编译 						java -jar fernflower.jar 111 .
+	Linux设置代理上网squid		export http_proxy=itwhy:123456@proxy.itwhy.org:8080  
+								export http_proxy=http://172.18.171.21:3128
+								export http_proxy=root:rootq1w2E#R$@172.18.171.21:3128
+								参考：http://blog.163.com/likaifeng@126/blog/static/320973102012221111622825/
+
+
+	shell>   mkdir -p /root/upload
+	shell>   lvcreate -L 10000M -n upload vg00
+	shell>   vgdisplay -v vg00
+	shell>   mkfs.ext4 /dev/vg00/upload
+	shell>   vgextend /dev/vg00 /dev/sda2p1
+
+	扩展逻辑分区
+	shell>   lvextend -L +12G  /dev/vg00/lv_root
+	shell>   /sbin/resize2fs  /dev/vg00/lv_root
+
+	检查：  df -h
+
+	查看逻辑磁盘组的剩余空间	vgdisplay vg00
+
+	find /root/soft/project/class/ -type f ! -name "*SMSServiceImpl.class"    
+
+
+	lvcreate -L 10G -n lv_test vg00
+	vgdisplay -v vg00
+	mkfs.ext4 /dev/vg00/lv_test
+	vgdisplay -v vg00
+
+	一个物理卷对应一个分区
+	1、创建物理卷							pvcreate /dev/sdb1
+		查看物理卷							pvdisplay/ pvscan
+	2、创建卷组								vgcreate www-data  /dev/sdb1
+	3、创建逻辑卷							lvcreate -L 3G -n test1 www-data
+	4、格式化								mke2fs -j /dev/www-data/test1   (格式化)
+	5、挂载逻辑卷							mount -t ext3 /dev/www-data/test1 /opt
+
+	删除
+	1、umount /opt
+	2、lvremove /dev/www-data/test1
+	3、vgremode www-data
+	4、pvremode /dev/sdb1
+
+
+-- Linux下取消软连接，做个案例来说明：
+	1.先建立一个软连接
+	[root@rekfan.com test]# ln -s file1  file1soft
+	[root@rekfan.com test]# ls -il
+	总计 0
+	1491138 -rw-r–r– 1 root  root 48 07-14 14:17 file1
+	1491140 lrwxrwxrwx 1 root root 5 07-14 14:24  file1soft -> file1
+
+	2.删除上面建立的软连接
+	rm -rf file1soft
+	ls -il
+
+
+-- linux shell 参数传递
+	在shell编程时.可以使用参数。Shell有位置参数和内部参数
+	 
+	1. 位置参数
+	　　由系统提供的参数称为位置参数。位置参数的值可以用$N得到，N是一个数字，如果为1，即$1.类似C语言中的数组，Linux会把输入的命令字符串分段并给每段进行标号，标号从0开始。第0号为程序名字，从1开始就表示传递给程序的参数。如$0表示程序的名字，$1表示传递给程序的第一个参数，以此类推。
+	 
+	2. 内部参数
+	　　上述过程中的$0是一个内部变量，它是必须的，而$1则可有可无。和$0一样的内部变量还有以下几个。
+	　　$# ----传递给程序的总的参数数目
+	　　$? ----上一个代码或者shell程序在shell中退出的情况，如果正常退出则返回0，反之为非0值。
+	　　$* ----传递给程序的所有参数组成的字符串。
+	 
+	举例说明：
+	[root@server tmp]# cat test.sh
+	#!/bin/bash
+	#test shell
+	echo $0
+	echo $1
+	echo $2
+	echo $?
+	echo $*
+	echo $#
+	[root@server tmp]# ./test.sh yema Bhanv edu network
+	 
+	./test.sh //程序名称
+	Yema //第一个参数
+	Bhanv //第二个参数
+	0 //程序执行结果
+	yema Bhanv edu network //传递参数所组成的字符串
+	4 //参数个数
+
+
+	【替换】
+	vi/vim 中可以使用 :s 命令来替换字符串。以前只会使用编辑软件进行替换，今天发现该命令有很多种写法（vi 真是强大啊，还有很多需要学习），记录几种在此，方便以后查询。
+
+	:s/well/good/ 替换当前行第一个 well 为 good
+
+	:s/well/good/g 替换当前行所有 well 为 good
+
+	:n,$s/well/good/ 替换第 n 行开始到最后一行中每一行的第一个 well 为 good
+
+	:n,$s/well/good/g 替换第 n 行开始到最后一行中每一行所有 well 为 good
+
+	n 为数字，若 n 为 .，表示从当前行开始到最后一行
+
+	:%s/well/good/（等同于 :g/well/s//good/） 替换每一行的第一个 well 为 good
+
+	:%s/well/good/g（等同于 :g/well/s//good/g） 替换每一行中所有 well 为 good
+
+	可以使用 # 作为分隔符，此时中间出现的 / 不会作为分隔符
+
+	:s#well/#good/# 替换当前行第一个 well/ 为 good/
+
+	:%s#/usr/bin#/bin#g
+
+	可以把文件中所有路径/usr/bin换成/bin
+
+	（二）Sumly法直接替换文件中的字符串。(此法不用打开文件即可替换字符串，而且可以批量替换多个文件。)
+	替换指定字符执行命令：
+	perl -p -i -e "s/China/Sumly/g" /www/*.htm /www/*.txt
+	上面的意思是说将www文件夹下所有的htm和txt文件中的“China”都替换为“Sumly”
+	perl -p -i -e "s/utf8mb4/utf8/g"  /root/soft/shanpao.sql
+	mysql -uroot -p123456
+	source /root/soft/shanpao.sql
+
+	perl -p -i -e "s/6379/6380/g" redis_6380.conf     -- 将配置文件redis_6380.conf中的6379-> 6380
+
+	
+	时区的设置 tzselect
+	硬件时钟与系统时钟同步：
+	# hwclock --hctosys（hc代表硬件时间，sys代表系统时间）
+	或者
+	# clock --hctosys
+	系统时钟和硬件时钟同步：
+	# hwclock --systohc
+	或者
+	# clock --systohc
+
+	date -s "2012-05-18 04:53:00"
+	看CMOS的时间：  
+	#clock –r 
+
+	将当前系统时间写入CMOS中去  
+	#clock –w 
+
+	
+	-----------------------------------------------------------
+
+	查看nfs服务是否开机自动启动。可以看见6个开机级别都不会启动nfs服务。
+	[root@db ~]# chkconfig  --list nfs
+	nfs             0:off   1:off   2:off   3:off   4:off   5:off   6:off
+
+	--设置开机自动启动nfs服务。
+	[root@db ~]# chkconfig  nfs on
+
+	--再次查看，可以看见2、3、4、5级别开机会自动启动nfs服务。
+	[root@db ~]# chkconfig  --list nfs
+	nfs             0:off   1:off   2:on    3:on    4:on    5:on    6:off
+
+	--取消开机自动启动nfs服务。
+	[root@db ~]# chkconfig nfs off
+
+	--再次查看，6个级别开机又都不会启动nfs服务了。
+	[root@db ~]# chkconfig  --list nfs
+	nfs             0:off   1:off   2:off   3:off   4:off   5:off   6:off
+
+	--设置3级别开机自动启动nfs服务。
+	[root@db ~]# chkconfig --level 3 nfs on
+
+	--再次查看，可以看见在级别开机会自动启动nfs服务。
+	[root@db ~]# chkconfig --list nfs
+	nfs             0:off   1:off   2:off   3:on    4:off   5:off   6:off
+
+
+
+	-----------------------------------------------------------
+	
+	linux有哪几种启动级别？以及各自的含义?
+	6个运行级别 
+
+	# 0 - 停机（千万不要把initdefault设置为0 ） 
+	# 1 - 单用户模式（相当于windows安全模式） 
+	# 2 - 多用户，但是没有NFS 
+	# 3 - 完全多用户模式 
+	# 4 - 自定义模式 
+	# 5 - X11 ，进到X Window系统了
+	# 6 - 重新启动（千万不要把initdefault设置为6 ） 
+
+	修改级别 
+	vi /etc/inittab 
+	把id:3:initdefault:中的3改为相应的级别
+
+
+	-----------------------------------------------------------
+
+	/root/env/zookeeper/zookeeper-3.4.8/zookeeper1/bin/zkCli.sh -server 127.0.0.1:2181
+		ls /
+		create /zk "test"
+		get /zk
+		set /zk "zkbak"
+		delete /zk
+	http://172.18.173.198:8080/dubbokeeper/index.htm#/zoopeeper
+	-----------------------------------------------------------
+	出口IP查询		wget www.ip38.com
+	-- linux中tar命令怎么解压.tgz与.tar.gz文件	
+		两者都可用
+		tar -zxvf 文件名
+		来解压
+		tar –jxvf Python-2.5.2.tar.bz2	
+	-----------------------------------------------------------
+	用lsof -p [进程ID] 可以看到某ID的打开文件状况。进程ID可能用 ps -ef|grep java列出  
+	-----------------------------------------------------------
+	-----------------------------------------------------------
+	-----------------------------------------------------------
+	-----------------------------------------------------------
+
+
+	yum -y install lrzsz
+	scp zookeeper-3.4.8-cluster.tar.gz  root@172.19.219.216:~/env/
+	#比较文件不同
+	diff /root/env/zookeeper/zookeeper-3.4.8/zookeeper2/conf/zoo.cfg /root/env/zookeeper/zookeeper-3.4.8/zookeeper3/conf/zoo.cfg
+
+	vi /usr/local/apache/conf/httpd.conf
+	/usr/local/apache/bin/apachectl restart
+	vi  /usr/local/apache/htdocs/showdoc/Application/Common/Conf/config.php 
+	/usr/local/php/bin/php -m 查看gd模块
+
+【ab测试】
+		ab -n 800 -c 800  http://172.19.219.215/
+		（-n发出800个请求，-c模拟800并发，相当800人同时访问，后面是测试url）
+
+		ab -t 60 -c 100 http://172.19.219.215/ 
+		在60秒内发请求，一次100个请求。 
+		  
+		//如果需要在url中带参数，这样做 
+		ab -t 60 -c 100 -T "text/plain" -p p.txt http://192.168.0.10/hello.html 
+		p.txt 是和ab.exe在一个目录 
+		p.txt 中可以写参数，如  p=wdp&fq=78 
+
+
+
+
+
+
+
+
+【Mysql】
+		连接mysql:
+		在命令行下输入 mysql -h localhost -u root -p回车,然后输入密码即可;或直接运行mysql自带的连接工具,然后输入密码即可.
+		  第一种方法:
+		 		在命令行下(未连接数据库),输入 mysql -h localhost -u root -p123456 < F:\hello world\niuzi.sql (注意路径不用加引号的!!) 回车即可.
+		  第二种方法:
+		 		在命令行下(已连接数据库,此时的提示符为 mysql> ),输入 source F:\hello world\niuzi.sql (注意路径不用加引号的) 或者 \. F:\hello world\niuzi.sql (注意路径不用加引号的) 回车即可
+
+		 /usr/bin/mysqldump -h172.18.173.197 -uroot -p123456 jira636 > /root/env/jira_2016-07-18.sql
+
+
+linux下利用nohup后台运行jar文件包程序
+	nohup java -jar xxxxx > /root/run.log &
+
+
+212
+cd /root/env
+tar -zcf biz-gateway-group.tar.gz tomcat-biz/ tomcat-gateway/ group-server	
+scp biz-gateway-group.tar.gz root@172.19.219.215:/root/env
+
+
+215
+
+
+
+nohup java -jar /root/env/group-server/group-server.jar > /root/env/group-server/run.log &
+tail -f  /root/env/group-server/run.log 
+
+
+环境重启：
+		/root/env/redis/bin/redis-server  /root/env/redis/redis_6380.conf
+		/root/soft/twemproxy-0.4.0/src/nutcracker -d -c /root/soft/twemproxy-0.4.0/conf/nutcracker.yml
